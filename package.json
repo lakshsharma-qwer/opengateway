@@ -1,0 +1,26 @@
+{
+  "name": "opengateway",
+  "private": true,
+  "version": "0.1.0",
+  "description": "OpenGateway - multi-merchant UPI payment platform (direct-to-merchant VPA, 0% MDR)",
+  "workspaces": [
+    "server",
+    "web",
+    "demo-store",
+    "e2e"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,web,store -c blue,magenta,green \"npm run dev -w server\" \"npm run dev -w web\" \"npm run dev -w demo-store\"",
+    "seed": "npm run seed -w server",
+    "test": "npm test -w server",
+    "build": "npm run build -w web",
+    "start": "npm start -w server",
+    "e2e": "npm test -w e2e"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

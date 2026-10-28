@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orders &amp; webhooks · Demo Store</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top">
+    <a class="logo" href="/"><i></i> Kulhad &amp; Co.</a>
+    <nav><a href="/">Shop</a><a class="on" href="/orders">Orders &amp; webhooks</a></nav>
+  </header>
+  <div class="wrap">
+    <div class="panel">
+      <h2>Orders created by this store</h2>
+      <div id="orders"></div>
+    </div>
+    <div class="panel">
+      <h2>Webhooks received (signature verified against the raw body)</h2>
+      <div id="hooks"></div>
+    </div>
+    <p class="muted">Refreshes every 3 seconds. Data is in memory and resets when the demo store restarts.</p>
+  </div>
+  <script>
+    const inr = (p) => '₹' + (p / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    const time = (t) => new Date(t * 1000).toLocaleTimeString();
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => '&#' + c.charCodeAt(0) + ';');
+    async function load() {
+      const d = await fetch('/api/activity').then((r) => r.json());
+      document.getElementById('orders').innerHTML = d.orders.length ? `<table><thead><tr><th>Order</th><th>Product</th><th>Amount</th><th>Payable</th><th>Status</th><th>Verified</th><th>UTR</th><th>Created</th></tr></thead><tbody>${
+        d.orders.map((o) => `<tr><td><code>${esc(o.id)}</code></td><td>${esc(o.product)}</td><td>${inr(o.amount)}</td><td>${inr(o.amount_payable)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span class="pill ${o.verified ? 'yes' : ''}">${o.verified ? 'yes' : '–'}</span></td><td>${esc(o.utr || '')}</td><td>${time(o.created_at)}</td></tr>`).join('')
+      }</tbody></table>` : '<div class="empty">No orders yet. Buy something on the shop page.</div>';
+      document.getElementById('hooks').innerHTML = d.webhooks.length ? `<table><thead><tr><th>Received</th><th>Event</th><th>Event id</th><th>Order</th><th>Status</th><th>Signature</th></tr></thead><tbody>${
+        d.webhooks.map((w) => `<tr><td>${time(w.received_at)}</td><td><code>${esc(w.type)}</code></td><td><code>${esc(w.event_id)}</code></td><td>${w.order_id ? `<code>${esc(w.order_id)}</code>` : ''}</td><td>${w.status ? `<span class="pill ${esc(w.status)}">${esc(w.status)}</span>` : ''}</td><td><span class="pill ${w.verified ? 'yes' : 'no'}">${w.verified ? 'valid' : 'invalid'}</span></td></tr>`).join('')
+      }</tbody></table>` : '<div class="empty">No webhooks yet. Pay for an order, or send a test ping from the dashboard (Developers → Webhooks).</div>';
+    }
+    load(); setInterval(load, 3000);
+  </script>
+</body>
+</html>

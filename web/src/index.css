@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Familjen Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* OpenGateway palette */
+  --color-brand-50: #f5f0fb;
+  --color-brand-100: #ebe1f7;
+  --color-brand-200: #d4c0ee;
+  --color-brand-300: #b394e0;
+  --color-brand-400: #8b5ecb;
+  --color-brand-500: #6f33b0;
+  --color-brand-600: #5f259f;
+  --color-brand-700: #4e1d85;
+  --color-brand-800: #3d1470;
+  --color-brand-900: #2a0d4f;
+
+  --color-ink: #1c1029;
+  --color-ink-2: #4a3f57;
+  --color-ink-3: #6b6178;
+  --color-paper: #f6f4fa;
+  --color-line: #e7e1ef;
+  --color-line-2: #d9d1e4;
+
+  --color-credit: #08774f;
+  --color-credit-soft: #e3f5ec;
+  --color-marigold: #f08a1c;
+  --color-marigold-soft: #fff1df;
+  --color-danger: #c8323c;
+  --color-danger-soft: #fdeaeb;
+
+  --shadow-card: 0 1px 2px rgb(28 16 41 / 0.04), 0 1px 1px rgb(28 16 41 / 0.03);
+  --shadow-pop: 0 18px 50px -12px rgb(42 13 79 / 0.28), 0 4px 12px -4px rgb(42 13 79 / 0.12);
+
+  --animate-fade-up: fade-up 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes shimmer {
+  from { background-position: -400px 0; }
+  to { background-position: 400px 0; }
+}
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: none; }
+}
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes scan {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(196px); }
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgb(95 37 159 / 0.35); }
+  100% { box-shadow: 0 0 0 14px rgb(95 37 159 / 0); }
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  h1, h2, h3, h4 { @apply font-display; letter-spacing: -0.01em; }
+  :focus-visible { outline: 2px solid var(--color-brand-500); outline-offset: 2px; border-radius: 6px; }
+  ::selection { background: var(--color-brand-200); }
+  .tabular { font-variant-numeric: tabular-nums; }
+}
+
+@layer components {
+  .skeleton {
+    background: linear-gradient(90deg, #eee9f4 0px, #f7f4fb 120px, #eee9f4 240px);
+    background-size: 800px 100%;
+    animation: var(--animate-shimmer);
+    border-radius: 6px;
+  }
+  /* Ticket perforation along the bottom of the amount stub */
+  .perforated {
+    position: relative;
+  }
+  .perforated::after {
+    content: "";
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: -1px;
+    height: 0;
+    border-bottom: 2px dashed rgb(255 255 255 / 0.35);
+  }
+  .notch-l, .notch-r {
+    position: absolute;
+    bottom: -11px;
+    width: 22px;
+    height: 22px;
+    border-radius: 9999px;
+    background: var(--notch-bg, var(--color-paper));
+  }
+  .notch-l { left: -11px; }
+  .notch-r { right: -11px; }
+  .grid-dots {
+    background-image: radial-gradient(rgb(95 37 159 / 0.12) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+  .prose-doc h2 { @apply text-2xl font-semibold mt-12 mb-3 text-ink scroll-mt-24; }
+  .prose-doc h3 { @apply text-lg font-semibold mt-8 mb-2 text-ink scroll-mt-24; }
+  .prose-doc p { @apply text-ink-2 leading-7 mb-4; }
+  .prose-doc ul { @apply list-disc pl-5 text-ink-2 leading-7 mb-4 space-y-1; }
+  .prose-doc code:not(pre code) { @apply font-mono text-[0.85em] bg-brand-50 text-brand-800 px-1.5 py-0.5 rounded; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
